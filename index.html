@@ -1,0 +1,74 @@
+<!-- v-cloak скрывает нескомпилированные элементы, пока сущность Vue.js не готова. -->
+<link rel="stylesheet" href="styles.css">
+
+<form id="main" v-cloak>
+
+	<h1>Услуги</h1>
+
+	<ul>
+		<!-- Цикл проходит по массиву услуг, присваивает обработчик для клика, и устанавливает или удаляет класс "active" -->
+		<li v-for="service in services" v-on:click="toggleActive(service)" v-bind:class="{ 'active': service.active}">
+			<!-- Показывает название и цену для каждого вложенного элемента.
+                Vue.js имеет встроенный фильтр валют для формирования цены -->
+			{{service.name}} <span>{{service.price | currency}}</span>
+		</li>
+	</ul>
+
+	<div class="total">
+		<!-- Высчитывает итоговую сумму -->
+		Итого: <span>{{total() | currency}}</span>
+	</div>
+
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js">
+    // Определяем собственный фильтр валют "currency". 
+Vue.filter('currency', function (value) {
+    return '$' + value.toFixed(2);
+});
+
+var demo = new Vue({
+    el: '#main',
+    data: {
+    	// Определяем свойства модели, представление будет проходить циклом
+        // по массиву услуг и генерировать элементы списка
+        // для каждого вложенного пункта.
+        services: [
+        	{
+        		name: 'Веб разработка',
+        		price: 300,
+        		active:true
+        	},{
+        		name: 'Дизайн',
+        		price: 400,
+        		active:false
+        	},{
+        		name: 'Интеграция',
+        		price: 250,
+        		active:false
+        	},{
+        		name: 'Обучение',
+        		price: 220,
+        		active:false
+        	}
+        ]
+    },
+    methods: {
+    	toggleActive: function(s){
+            s.active = !s.active;
+    	},
+    	total: function(){
+
+        	var total = 0;
+
+        	this.services.forEach(function(s){
+        		if (s.active){
+        			total+= s.price;
+        		}
+        	});
+
+    	   return total;
+        }
+    }
+});
+</script>
